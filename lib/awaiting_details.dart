@@ -172,9 +172,9 @@ class _AwaitingDetailsState extends State<AwaitingDetails> {
                             onPressed: () async {
                               FocusScope.of(context).unfocus();
 
-                              // responseContent = await controller.getText();
+                              responseContent = await controller.getText();
 
-                              if (responseContent == null) {
+                              if (responseContent.isEmpty) {
                                 showDialog(
                                   context: context,
                                   builder: (context) => AlertDialog(
@@ -191,29 +191,26 @@ class _AwaitingDetailsState extends State<AwaitingDetails> {
                                   ),
                                 );
                               } else {
-                                // ApiResponse response =
-                                //     await updateAcknowledgement(
-                                //         reqid: widget.id!,
-                                //         requestStatus: 'approved',
-                                //         responseContent: responseContent!);
-                                //
-                                // if (response.error == null) {
-                                //   ScaffoldMessenger.of(context).showSnackBar(
-                                //     SnackBar(
-                                //       backgroundColor: Colors.teal,
-                                //       content: Text(
-                                //           'Acknowledgement Request approved Successfully'),
-                                //     ),
-                                //   );
-                                // } else {
-                                //   //
-                                // }
+                                ApiResponse response =
+                                    await updateAcknowledgement(
+                                        reqid: widget.id!,
+                                        requestStatus: 'approved',
+                                        responseContent: responseContent!);
+
+                                if (response.error == null) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      backgroundColor: Colors.teal,
+                                      content: Text(
+                                          'Acknowledgement Request approved Successfully'),
+                                    ),
+                                  );
+                                } else {
+                                  //
+                                }
 
                                 controller.clear();
-
                                 Navigator.pop(context);
-                                // Navigator.pushNamed(
-                                //     context, AwaitingApprovals.id);
                               }
                             },
                             style: ElevatedButton.styleFrom(
@@ -281,9 +278,8 @@ class _AwaitingDetailsState extends State<AwaitingDetails> {
                               FocusScope.of(context).unfocus();
 
                               responseContent = await controller.getText();
-                              print('response content   ${responseContent}');
 
-                              if (responseContent == null) {
+                              if (responseContent.isEmpty) {
                                 showDialog(
                                   context: context,
                                   builder: (context) => AlertDialog(
@@ -318,8 +314,6 @@ class _AwaitingDetailsState extends State<AwaitingDetails> {
 
                                 controller.clear();
                                 Navigator.pop(context);
-                                Navigator.pushNamed(
-                                    context, AwaitingApprovals.id);
                               }
                             },
                             style: ElevatedButton.styleFrom(

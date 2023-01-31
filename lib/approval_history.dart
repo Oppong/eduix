@@ -110,10 +110,6 @@ class _ApprovalHistoryPageState extends State<ApprovalHistoryPage> {
             var formattedNewMonth = DateFormat.M().format(value);
             var formattedNewDay = DateFormat.d().format(value);
 
-            // print(
-            //     'print $formattedNewYear, $formattedNewMonth $formattedNewDay');
-
-            //-- using button --//
             final DateTime date2 = DateTime(int.parse(formattedNewYear),
                 int.parse(formattedNewMonth), int.parse(formattedNewDay));
             final timestamp1 = date2.millisecondsSinceEpoch;
@@ -124,7 +120,6 @@ class _ApprovalHistoryPageState extends State<ApprovalHistoryPage> {
                 "-" +
                 formattedNewDay;
 
-            print('start timestamp $timestamp1 (milliseconds)');
             initialDay = displayInitialDate;
           })
         });
@@ -143,10 +138,6 @@ class _ApprovalHistoryPageState extends State<ApprovalHistoryPage> {
             var formattedEndMonth = DateFormat.M().format(value);
             var formattedEndDay = DateFormat.d().format(value);
 
-            print(
-                'print $formattedEndYear, $formattedEndMonth $formattedEndDay');
-
-            //-- using button --//
             final DateTime date3 = DateTime(int.parse(formattedEndYear),
                 int.parse(formattedEndMonth), int.parse(formattedEndDay));
             final timestamp1 = date3.millisecondsSinceEpoch;

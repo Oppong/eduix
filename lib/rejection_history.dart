@@ -65,17 +65,17 @@ class _RejectionHistoryState extends State<RejectionHistory> {
             var formattedNewMonth = DateFormat.M().format(value);
             var formattedNewDay = DateFormat.d().format(value);
 
-            // print(
-            //     'print $formattedNewYear, $formattedNewMonth $formattedNewDay');
-
-            //-- using button --//
             final DateTime date2 = DateTime(int.parse(formattedNewYear),
                 int.parse(formattedNewMonth), int.parse(formattedNewDay));
             final timestamp1 = date2.millisecondsSinceEpoch;
             initialDayMilliseconds = timestamp1;
+            var displayInitialDate = formattedNewYear +
+                "-" +
+                formattedNewMonth +
+                "-" +
+                formattedNewDay;
 
-            print('start timestamp $timestamp1 (milliseconds)');
-            initialDay = date2.toString();
+            initialDay = displayInitialDate;
           })
         });
   }
@@ -93,17 +93,18 @@ class _RejectionHistoryState extends State<RejectionHistory> {
             var formattedEndMonth = DateFormat.M().format(value);
             var formattedEndDay = DateFormat.d().format(value);
 
-            print(
-                'print $formattedEndYear, $formattedEndMonth $formattedEndDay');
-
-            //-- using button --//
             final DateTime date3 = DateTime(int.parse(formattedEndYear),
                 int.parse(formattedEndMonth), int.parse(formattedEndDay));
             final timestamp1 = date3.millisecondsSinceEpoch;
-            print('end timestamp $timestamp1 (milliseconds)');
+
+            var displayEndDate = formattedEndYear +
+                "-" +
+                formattedEndMonth +
+                "-" +
+                formattedEndDay;
 
             endDayMilliseconds = timestamp1;
-            endDay = date3.toString();
+            endDay = displayEndDate;
           })
         });
   }
