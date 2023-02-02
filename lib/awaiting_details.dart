@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'package:eduix/homepage.dart';
 import 'package:quill_html_editor/quill_html_editor.dart';
 import 'package:eduix/awaiting_approvals.dart';
 import 'package:eduix/models/api_response.dart';
@@ -198,7 +197,7 @@ class _AwaitingDetailsState extends State<AwaitingDetails> {
                                         requestStatus: 'approved',
                                         responseContent: responseContent!)
                                     .then((response) {
-                                  print('MY RESPONSE $response');
+                                  // print('MY RESPONSE $response');
                                   if (response['statusCode'] == 200) {
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(
@@ -218,10 +217,6 @@ class _AwaitingDetailsState extends State<AwaitingDetails> {
                                 });
                                 controller.clear();
                                 Navigator.pop(context);
-
-                                Navigator.pushNamedAndRemoveUntil(
-                                    context, HomePage.id, (route) => false);
-
                                 Navigator.pushNamedAndRemoveUntil(
                                     context, HomePage.id, (route) => false);
                               }
@@ -309,22 +304,29 @@ class _AwaitingDetailsState extends State<AwaitingDetails> {
                                   ),
                                 );
                               } else {
-                                ApiResponse response =
-                                    await updateAcknowledgement(
+                                await updateAcknowledgement(
                                         reqid: widget.id!,
                                         requestStatus: 'rejected',
-                                        responseContent: responseContent!);
-
-                                if (response.error == null) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      backgroundColor: Colors.teal,
-                                      content: Text(
-                                          'Acknowledgement Request has been rejected'),
-                                    ),
-                                  );
-                                }
-
+                                        responseContent: responseContent!)
+                                    .then((response) {
+                                  // print('MY RESPONSE $response');
+                                  if (response['statusCode'] == 200) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        backgroundColor: Colors.teal,
+                                        content: Text('${response['message']}'),
+                                      ),
+                                    );
+                                  } else {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        backgroundColor: Colors.red,
+                                        content: Text(
+                                            'Acknowledgement Request Failed'),
+                                      ),
+                                    );
+                                  }
+                                });
                                 controller.clear();
                                 Navigator.pop(context);
                                 Navigator.pushNamedAndRemoveUntil(
@@ -383,16 +385,3 @@ class _AwaitingDetailsState extends State<AwaitingDetails> {
     );
   }
 }
-
-/*
-  responseContent =
-                                  jsonEncode(_controller.document.toDelta());
-                              var responseContentee = jsonEncode(
-                                  _controller.document.toPlainText());
-                                  int.parse(
-                                      responseContentee.length.toString()) <=
-                                  5),
-
-
-
- */

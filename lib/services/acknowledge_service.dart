@@ -56,18 +56,13 @@ Future<dynamic> updateAcknowledgement(
       'response_content': responseContent,
     });
 
-    print(' STATUS ${response.statusCode}');
-    print('RESPONSE API ${jsonDecode(response.body)} ');
+    // print(' STATUS ${response.statusCode}');
+    // print('RESPONSE API ${jsonDecode(response.body)} ');
     switch (response.statusCode) {
       case 200:
-        apiResponse.data = jsonDecode(response.body)['message']
-            .map((p) => Requests.fromJson(p))
-            .toList();
-
         String message = jsonDecode(response.body)['message'];
         dynamic messageData = {'message': message, 'statusCode': 200};
         return messageData;
-
         break;
       case 403:
         dynamic messageData = {'message': "Failed", 'statusCode': 403};
