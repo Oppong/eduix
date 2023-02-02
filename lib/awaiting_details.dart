@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
 import 'constant.dart';
+import 'homepage.dart';
 import 'models/requests.dart';
 
 class AwaitingDetails extends StatefulWidget {
@@ -177,7 +178,7 @@ class _AwaitingDetailsState extends State<AwaitingDetails> {
                               if (responseContent.isEmpty) {
                                 showDialog(
                                   context: context,
-                                  builder: (context) => AlertDialog(
+                                  builder: (context) =>  AlertDialog(
                                     content: Text(
                                         'Enter a response content/message'),
                                     actions: [
@@ -191,26 +192,33 @@ class _AwaitingDetailsState extends State<AwaitingDetails> {
                                   ),
                                 );
                               } else {
-                                ApiResponse response =
                                     await updateAcknowledgement(
                                         reqid: widget.id!,
                                         requestStatus: 'approved',
-                                        responseContent: responseContent!);
-
-                                if (response.error == null) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      backgroundColor: Colors.teal,
-                                      content: Text(
-                                          'Acknowledgement Request approved Successfully'),
-                                    ),
-                                  );
-                                } else {
-                                  //
-                                }
-
+                                        responseContent: responseContent!)
+                                        .then((response){
+                                          print('MY RESPONSE $response');
+                                          if(response['statusCode'] == 200 ){
+                                        ScaffoldMessenger.of(context).showSnackBar(
+                                              SnackBar(
+                                                backgroundColor: Colors.teal,
+                                                content: Text(
+                                                    '${response['message']}'),
+                                              ),
+                                            );
+                                          }else{
+                                            ScaffoldMessenger.of(context).showSnackBar(
+                                              SnackBar(
+                                                backgroundColor: Colors.red,
+                                                content: Text(
+                                                    'Acknowledgement Request Failed'),
+                                              ),
+                                            );
+                                          }
+                                    });
                                 controller.clear();
                                 Navigator.pop(context);
+                                Navigator.pushNamedAndRemoveUntil(context, HomePage.id, (route) => false);
                               }
                             },
                             style: ElevatedButton.styleFrom(

@@ -34,13 +34,21 @@ class _HomePageState extends State<HomePage> {
     super.initState();
     getRequestPendingData();
     getUser();
+
+    Timer.periodic(Duration(seconds: 1), (timer) {
+      Provider.of<AwaitingProvider>(context, listen: false)
+          .allAwaitingApprovals();
+    });
   }
 
   var dated = DateFormat.yMMMMEEEEd();
   List<dynamic> reqs = [];
 
+  int testval = 0;
+
   void getRequestPendingData() async {
     String token = await getToken();
+
     final response = await http.get(Uri.parse(pendingrequestsUrl), headers: {
       'Accept': 'application/json',
       'Authorization': 'Bearer $token',
@@ -75,14 +83,10 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+
     // AwaitingProvider awaitingProvider = Provider.of(context);
     // awaitingProvider.allAwaitingApprovals();
 
-    // Timer.periodic(Duration(seconds: 8), (timer) {
-    //   Provider.of<AwaitingProvider>(context, listen: false)
-    //       .allAwaitingApprovals();
-    //   print('timer for provider ${timer.tick}');
-    // });
 
     return Scaffold(
       drawer: drawer(),
