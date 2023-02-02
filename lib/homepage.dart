@@ -38,13 +38,11 @@ class _HomePageState extends State<HomePage> {
     Timer.periodic(Duration(seconds: 1), (timer) {
       Provider.of<AwaitingProvider>(context, listen: false)
           .allAwaitingApprovals();
-<<<<<<< HEAD
+
       // setState(() {
       //   testval++;
       // });
       print('timer for provider ${timer.tick}');
-=======
->>>>>>> 80cf77152a716f0522fd1f5c5b6029e2893ba09e
     });
   }
 
@@ -90,15 +88,11 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-<<<<<<< HEAD
     AwaitingProvider awaitingProvider = Provider.of(context);
     awaitingProvider.allAwaitingApprovals();
-=======
 
     // AwaitingProvider awaitingProvider = Provider.of(context);
     // awaitingProvider.allAwaitingApprovals();
-
->>>>>>> 80cf77152a716f0522fd1f5c5b6029e2893ba09e
 
     return Scaffold(
       drawer: drawer(),
