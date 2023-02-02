@@ -34,6 +34,15 @@ class _HomePageState extends State<HomePage> {
     super.initState();
     getRequestPendingData();
     getUser();
+
+    Timer.periodic(Duration(seconds: 1), (timer) {
+      Provider.of<AwaitingProvider>(context, listen: false)
+          .allAwaitingApprovals();
+      // setState(() {
+      //   testval++;
+      // });
+      print('timer for provider ${timer.tick}');
+    });
   }
 
   var dated = DateFormat.yMMMMEEEEd();
@@ -75,14 +84,8 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    // AwaitingProvider awaitingProvider = Provider.of(context);
-    // awaitingProvider.allAwaitingApprovals();
-
-    // Timer.periodic(Duration(seconds: 8), (timer) {
-    //   Provider.of<AwaitingProvider>(context, listen: false)
-    //       .allAwaitingApprovals();
-    //   print('timer for provider ${timer.tick}');
-    // });
+    AwaitingProvider awaitingProvider = Provider.of(context);
+    awaitingProvider.allAwaitingApprovals();
 
     return Scaffold(
       drawer: drawer(),
@@ -336,3 +339,9 @@ class _HomePageState extends State<HomePage> {
     );
   }
 }
+
+// Timer.periodic(Duration(seconds: 8), (timer) {
+//   Provider.of<AwaitingProvider>(context, listen: false)
+//       .allAwaitingApprovals();
+//   print('timer for provider ${timer.tick}');
+// });

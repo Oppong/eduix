@@ -61,6 +61,7 @@ Future<ApiResponse> updateAcknowledgement(
         apiResponse.data = jsonDecode(response.body)['message']
             .map((p) => Requests.fromJson(p))
             .toList();
+
         break;
       case 403:
         apiResponse.error = jsonDecode(response.body)['message'];

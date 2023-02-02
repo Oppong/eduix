@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:eduix/homepage.dart';
 import 'package:quill_html_editor/quill_html_editor.dart';
 import 'package:eduix/awaiting_approvals.dart';
 import 'package:eduix/models/api_response.dart';
@@ -211,6 +212,8 @@ class _AwaitingDetailsState extends State<AwaitingDetails> {
 
                                 controller.clear();
                                 Navigator.pop(context);
+                                Navigator.pushNamedAndRemoveUntil(
+                                    context, HomePage.id, (route) => false);
                               }
                             },
                             style: ElevatedButton.styleFrom(
@@ -314,6 +317,8 @@ class _AwaitingDetailsState extends State<AwaitingDetails> {
 
                                 controller.clear();
                                 Navigator.pop(context);
+                                Navigator.pushNamedAndRemoveUntil(
+                                    context, HomePage.id, (route) => false);
                               }
                             },
                             style: ElevatedButton.styleFrom(
