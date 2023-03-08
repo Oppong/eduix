@@ -8,39 +8,37 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../models/user.dart';
 
 //Login
-Future<ApiResponse> login(String email) async {
-  ApiResponse apiResponse = ApiResponse();
-
+Future<dynamic> login({required String email}) async {
   try {
     final response = await http.post(Uri.parse(loginUrl),
         headers: {'Accept': 'application/json'}, body: {'email': email});
 
-    switch (response.statusCode) {
-      case 200:
-        apiResponse.data = User.fromJson(jsonDecode(response.body));
-        break;
-      case 422:
-        final errors = jsonDecode(response.body)['errors'];
-        apiResponse.error = errors[errors.keys.elementAt(0)][0];
-        break;
-      case 403:
-        apiResponse.error = jsonDecode(response.body)['message'];
-        break;
-      default:
-        apiResponse.error = SomethingWentWrong;
-        break;
+    print('response login ${response.body}');
+    if (response.statusCode == 200) {
+      dynamic userInfo = jsonDecode(response.body);
+      return userInfo;
+    } else {
+      if (response.statusCode == 403) {
+        String message = jsonDecode(response.body)['message'];
+        dynamic messageData = {'message': message, 'statusCode': 403};
+        return messageData;
+      } else {
+        String message = jsonDecode(response.body)['message'];
+        dynamic messageData = {'message': message};
+        return messageData;
+      }
     }
   } catch (e) {
-    apiResponse.error = serverError;
+    dynamic messageData = {
+      'message': "Failed to load from server",
+      'statusCode': 500
+    };
+    return messageData;
   }
-
-  return apiResponse;
 }
 
 //getting user information
-Future<ApiResponse> getUserDetail() async {
-  ApiResponse apiResponse = ApiResponse();
-
+Future<dynamic> getUserDetail() async {
   try {
     String token = await getToken();
     final response = await http.get(Uri.parse(userUrl), headers: {
@@ -48,23 +46,17 @@ Future<ApiResponse> getUserDetail() async {
       'Authorization': 'Bearer $token'
     });
 
-    print(jsonDecode(response.body));
-    switch (response.statusCode) {
-      case 200:
-        apiResponse.data = User.fromJson(jsonDecode(response.body));
-        break;
-      case 401:
-        apiResponse.error = unauthorized;
-        break;
-      default:
-        apiResponse.error = SomethingWentWrong;
-        break;
-    }
+    if (response.statusCode == 200) {
+      dynamic userinfo = jsonDecode(response.body);
+      return userinfo;
+    } else {}
   } catch (e) {
-    apiResponse.error = serverError;
+    dynamic messageData = {
+      'message': "Failed to load from server",
+      'statusCode': 500
+    };
+    return messageData;
   }
-
-  return apiResponse;
 }
 
 //get token
@@ -84,3 +76,4 @@ Future<bool> logout() async {
   SharedPreferences pref = await SharedPreferences.getInstance();
   return await pref.remove('token');
 }
+

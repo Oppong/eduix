@@ -23,25 +23,6 @@ class _SignInPageState extends State<SignInPage> {
   final _emailController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
-  void loginUser() async {
-    ApiResponse response = await login(_emailController.text);
-
-    if (response.error == null) {
-      saveUserInfoAndRedirect(response.data as User);
-    } else {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('${response.error}')));
-    }
-  }
-
-  void saveUserInfoAndRedirect(User user) async {
-    SharedPreferences pref = await SharedPreferences.getInstance();
-    await pref.setString('token', user.token ?? '');
-    await pref.setInt('id', user.id ?? 0);
-    Navigator.of(context)
-        .pushNamedAndRemoveUntil(HomePage.id, (route) => false);
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -126,12 +107,35 @@ class _SignInPageState extends State<SignInPage> {
                                 isLoading = true;
                               });
 
-                              loginUser();
+                              // loginUser();
 
-                              setState(() {
-                                isLoading = false;
+                              login(email: email).then((response) async {
+                                if (response['status'] == 200) {
+                                  String token = response['token'];
+
+                                  SharedPreferences pref =
+                                      await SharedPreferences.getInstance();
+                                  pref.setString('token', token);
+
+                                  Navigator.of(context).pushNamedAndRemoveUntil(
+                                      HomePage.id, (route) => false);
+
+                                  setState(() {
+                                    isLoading = false;
+                                  });
+                                  _emailController.clear();
+                                } else {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      backgroundColor: Colors.red,
+                                      content: Text('${response['message']}'),
+                                    ),
+                                  );
+                                  setState(() {
+                                    isLoading = false;
+                                  });
+                                }
                               });
-                              _emailController.clear();
                             }
                           },
                           child: Text('Sign In'),
@@ -147,5 +151,23 @@ class _SignInPageState extends State<SignInPage> {
 }
 
 /*
+void loginUser() async {
+    ApiResponse response = await login(_emailController.text);
 
+    if (response.error == null) {
+      saveUserInfoAndRedirect(response.data as User);
+    } else {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('${response.error}')));
+    }
+  }
+
+
+  void saveUserInfoAndRedirect(User user) async {
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    await pref.setString('token', user.token ?? '');
+    await pref.setInt('id', user.id ?? 0);
+    Navigator.of(context)
+        .pushNamedAndRemoveUntil(HomePage.id, (route) => false);
+  }
  */

@@ -19,6 +19,7 @@ class SplashPage extends StatefulWidget {
 }
 
 class _SplashPageState extends State<SplashPage> {
+  /*
   void loadUserInformation() async {
     String token = await getToken();
     if (token == '') {
@@ -38,12 +39,13 @@ class _SplashPageState extends State<SplashPage> {
       }
     }
   }
+   */
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    loadUserInformation();
+    // loadUserInformation();
     Provider.of<AwaitingProvider>(context, listen: false)
         .allAwaitingApprovals();
   }

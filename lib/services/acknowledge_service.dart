@@ -6,39 +6,7 @@ import 'package:eduix/models/requests.dart';
 import 'package:eduix/services/user_service.dart';
 import 'package:http/http.dart' as http;
 
-//get all acknowledgement request
-Future<ApiResponse> getAcknowledgement() async {
-  ApiResponse apiResponse = ApiResponse();
-
-  try {
-    String token = await getToken();
-    final response = await http.get(Uri.parse(pendingrequestsUrl), headers: {
-      'Accept': 'application/json',
-      'Authorization': 'Bearer $token'
-    });
-
-    switch (response.statusCode) {
-      case 200:
-        apiResponse.data = jsonDecode(response.body)['pending']
-            .map((p) => Requests.fromJson(p))
-            .toList();
-        apiResponse.data as List<dynamic>;
-        break;
-      case 401:
-        apiResponse.error = unauthorized;
-        break;
-      default:
-        apiResponse.error = SomethingWentWrong;
-        break;
-    }
-  } catch (e) {
-    apiResponse.error = serverError;
-  }
-
-  return apiResponse;
-}
-
-// delete a single acknowledgement request
+// update a single acknowledgement request
 Future<dynamic> updateAcknowledgement(
     {required int reqid,
     required String requestStatus,
@@ -56,41 +24,28 @@ Future<dynamic> updateAcknowledgement(
       'response_content': responseContent,
     });
 
-    // print(' STATUS ${response.statusCode}');
-    // print('RESPONSE API ${jsonDecode(response.body)} ');
-    switch (response.statusCode) {
-      case 200:
+    if (response.statusCode == 200) {
+      dynamic message = jsonDecode(response.body);
+      return message;
+    } else {
+      if (response.statusCode == 403) {
         String message = jsonDecode(response.body)['message'];
-        dynamic messageData = {'message': message, 'statusCode': 200};
+        dynamic messageData = {'message': message, 'statusCode': 403};
         return messageData;
-        break;
-      case 403:
-        dynamic messageData = {'message': "Failed", 'statusCode': 403};
-        return messageData;
-        break;
-      case 401:
-        apiResponse.error = unauthorized;
-        dynamic messageData = {'message': "Failed", 'statusCode': 401};
-        return messageData;
-        break;
-      default:
-        apiResponse.error = SomethingWentWrong;
-        dynamic messageData = {'message': "Failed", 'statusCode': 404};
-        return messageData;
-        break;
+      }
     }
   } catch (e) {
-    apiResponse.error = serverError;
     print(' CATCH ERROR $e');
-    dynamic messageData = {'message': "Failed", 'statusCode': 500};
+    dynamic messageData = {
+      'message': "Failed to load from server",
+      'statusCode': 500
+    };
     return messageData;
   }
 }
 
 // delete a single acknowledgement request
-Future<ApiResponse> deleteAcknowledgement(int regid) async {
-  ApiResponse apiResponse = ApiResponse();
-
+Future<dynamic> deleteAcknowledgement(int regid) async {
   try {
     String token = await getToken();
     final response = await http.delete(Uri.parse('$deleteRequestsUrl/$regid'),
@@ -99,25 +54,22 @@ Future<ApiResponse> deleteAcknowledgement(int regid) async {
           'Authorization': 'Bearer $token'
         });
 
-    switch (response.statusCode) {
-      case 200:
-        apiResponse.data = jsonDecode(response.body)['message']
-            .map((p) => Requests.fromJson(p))
-            .toList();
-        break;
-      case 403:
-        apiResponse.error = jsonDecode(response.body)['message'];
-        break;
-      case 401:
-        apiResponse.error = unauthorized;
-        break;
-      default:
-        apiResponse.error = SomethingWentWrong;
-        break;
+    if (response.statusCode == 200) {
+      dynamic message = jsonDecode(response.body);
+      return message;
+    } else {
+      if (response.statusCode == 403) {
+        String message = jsonDecode(response.body)['message'];
+        dynamic messageData = {'message': message, 'statusCode': 403};
+        return messageData;
+      }
     }
   } catch (e) {
-    apiResponse.error = serverError;
+    print(' CATCH ERROR $e');
+    dynamic messageData = {
+      'message': "Failed to load from server",
+      'statusCode': 500
+    };
+    return messageData;
   }
-
-  return apiResponse;
 }

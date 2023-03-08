@@ -1,23 +1,17 @@
 import 'dart:async';
-import 'dart:convert';
-
 import 'package:connectivity_wrapper/connectivity_wrapper.dart';
 import 'package:eduix/awaiting_details.dart';
 import 'package:eduix/awaiting_provider.dart';
 import 'package:eduix/constant.dart';
 import 'package:eduix/drawerlistItem.dart';
-import 'package:eduix/models/api_response.dart';
 import 'package:eduix/rejection_history.dart';
 import 'package:eduix/services/user_service.dart';
 import 'package:eduix/signin.dart';
 import 'package:flutter/material.dart';
 import 'package:eduix/awaiting_approvals.dart';
-import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'approval_history.dart';
-import 'models/requests.dart';
-import 'models/user.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -29,70 +23,35 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   @override
+  var dated = DateFormat.yMMMMEEEEd();
+
+  String? email;
+  String? name;
+
+  getUser() async {
+    var response = await getUserDetail();
+    if (response['status'] == 200) {
+      setState(() {
+        email = response['user']['email'];
+        name = response['user']['name'];
+      });
+    }
+  }
+
   void initState() {
     // TODO: implement initState
     super.initState();
-    getRequestPendingData();
     getUser();
-
     Timer.periodic(Duration(seconds: 1), (timer) {
       Provider.of<AwaitingProvider>(context, listen: false)
           .allAwaitingApprovals();
-
-      // setState(() {
-      //   testval++;
-      // });
-      print('timer for provider ${timer.tick}');
     });
-  }
-
-  var dated = DateFormat.yMMMMEEEEd();
-  List<dynamic> reqs = [];
-
-  int testval = 0;
-
-  void getRequestPendingData() async {
-    String token = await getToken();
-
-    final response = await http.get(Uri.parse(pendingrequestsUrl), headers: {
-      'Accept': 'application/json',
-      'Authorization': 'Bearer $token',
-    });
-
-    if (response.statusCode == 200) {
-      final json = jsonDecode(response.body);
-      final results = json as List<dynamic>;
-      final trans = results.map((e) => Requests.fromJson(e)).toList();
-
-      setState(() {
-        reqs = trans;
-      });
-    } else {
-      throw Exception('Could not retrieve acknowledgement request');
-    }
-  }
-
-  //getting a user email
-  User? userEmail;
-  User? userName;
-
-  getUser() async {
-    ApiResponse response = await getUserDetail();
-    if (response.error == null) {
-      setState(() {
-        userEmail = response.data as User;
-        userName = response.data as User;
-      });
-    }
   }
 
   @override
   Widget build(BuildContext context) {
     AwaitingProvider awaitingProvider = Provider.of(context);
     awaitingProvider.allAwaitingApprovals();
-
-    // AwaitingProvider awaitingProvider = Provider.of(context);
-    // awaitingProvider.allAwaitingApprovals();
 
     return Scaffold(
       drawer: drawer(),
@@ -130,7 +89,7 @@ class _HomePageState extends State<HomePage> {
                     left: 0,
                     right: 0,
                     child: Text(
-                      userEmail?.name == null ? '' : 'Hi ${userEmail!.name!}',
+                      name == null ? '' : 'Hi ${name!}',
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 25,
@@ -290,7 +249,7 @@ class _HomePageState extends State<HomePage> {
                 Padding(
                   padding: const EdgeInsets.only(top: 18.0, left: 18),
                   child: Text(
-                    userEmail?.name == null ? '' : userEmail!.name!,
+                    name == null ? '' : name!,
                     style: TextStyle(
                       fontSize: 14,
                       color: Colors.white,
@@ -300,7 +259,7 @@ class _HomePageState extends State<HomePage> {
                 Padding(
                   padding: const EdgeInsets.only(left: 18.0),
                   child: Text(
-                    userEmail?.email == null ? '' : userEmail!.email!,
+                    email == null ? '' : email!,
                     style: TextStyle(
                       fontSize: 14,
                       color: Colors.white,
@@ -346,9 +305,3 @@ class _HomePageState extends State<HomePage> {
     );
   }
 }
-
-// Timer.periodic(Duration(seconds: 8), (timer) {
-//   Provider.of<AwaitingProvider>(context, listen: false)
-//       .allAwaitingApprovals();
-//   print('timer for provider ${timer.tick}');
-// });

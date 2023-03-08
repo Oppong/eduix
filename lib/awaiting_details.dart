@@ -1,15 +1,9 @@
-import 'dart:convert';
 import 'package:quill_html_editor/quill_html_editor.dart';
-import 'package:eduix/awaiting_approvals.dart';
-import 'package:eduix/models/api_response.dart';
 import 'package:eduix/services/acknowledge_service.dart';
-import 'package:eduix/services/user_service.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:http/http.dart' as http;
 import 'constant.dart';
 import 'homepage.dart';
-import 'models/requests.dart';
 
 class AwaitingDetails extends StatefulWidget {
   const AwaitingDetails(
@@ -41,30 +35,6 @@ class _AwaitingDetailsState extends State<AwaitingDetails> {
   ];
 
   var dated = DateFormat.yMMMMEEEEd();
-
-  Future<Requests> getSingleRequestsData() async {
-    String token = await getToken();
-    final response = await http
-        .get(Uri.parse('$showSingleRequestUrl/${widget.id}'), headers: {
-      'Accept': 'application/json',
-      'Authorization': 'Bearer $token',
-    });
-
-    if (response.statusCode == 200) {
-      Map<String, dynamic> json = jsonDecode(response.body);
-      return Requests.fromJson(json);
-    } else {
-      throw Exception();
-    }
-  }
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    getSingleRequestsData();
-  }
-
   var responseContent;
   final textController = TextEditingController();
 
@@ -197,8 +167,7 @@ class _AwaitingDetailsState extends State<AwaitingDetails> {
                                         requestStatus: 'approved',
                                         responseContent: responseContent!)
                                     .then((response) {
-                                  // print('MY RESPONSE $response');
-                                  if (response['statusCode'] == 200) {
+                                  if (response['status'] == 200) {
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(
                                         backgroundColor: Colors.teal,
@@ -209,8 +178,7 @@ class _AwaitingDetailsState extends State<AwaitingDetails> {
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(
                                         backgroundColor: Colors.red,
-                                        content: Text(
-                                            'Acknowledgement Request Failed'),
+                                        content: Text('${response['message']}'),
                                       ),
                                     );
                                   }
@@ -310,7 +278,7 @@ class _AwaitingDetailsState extends State<AwaitingDetails> {
                                         responseContent: responseContent!)
                                     .then((response) {
                                   // print('MY RESPONSE $response');
-                                  if (response['statusCode'] == 200) {
+                                  if (response['status'] == 200) {
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(
                                         backgroundColor: Colors.teal,
@@ -321,8 +289,7 @@ class _AwaitingDetailsState extends State<AwaitingDetails> {
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(
                                         backgroundColor: Colors.red,
-                                        content: Text(
-                                            'Acknowledgement Request Failed'),
+                                        content: Text('${response['message']}'),
                                       ),
                                     );
                                   }
@@ -385,3 +352,21 @@ class _AwaitingDetailsState extends State<AwaitingDetails> {
     );
   }
 }
+
+/*
+Future<Requests> getSingleRequestsData() async {
+    String token = await getToken();
+    final response = await http
+        .get(Uri.parse('$showSingleRequestUrl/${widget.id}'), headers: {
+      'Accept': 'application/json',
+      'Authorization': 'Bearer $token',
+    });
+
+    if (response.statusCode == 200) {
+      Map<String, dynamic> json = jsonDecode(response.body);
+      return Requests.fromJson(json);
+    } else {
+      throw Exception();
+    }
+  }
+ */

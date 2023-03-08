@@ -6,19 +6,27 @@ import 'package:eduix/rejection_history.dart';
 import 'package:eduix/request_details.dart';
 import 'package:eduix/signin.dart';
 import 'package:eduix/splashpage.dart';
+import 'package:eduix/splashpage2.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:connectivity_wrapper/connectivity_wrapper.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'awaiting_details.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(const EduixApp());
+
+  SharedPreferences pref = await SharedPreferences.getInstance();
+  var token = pref.get('token');
+
+  runApp(EduixApp(token as dynamic));
 }
 
 class EduixApp extends StatelessWidget {
-  const EduixApp({Key? key}) : super(key: key);
+  // const EduixApp({Key? key}) : super(key: key);
 
+  EduixApp(this.token);
+  final String? token;
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
@@ -27,10 +35,11 @@ class EduixApp extends StatelessWidget {
       ],
       child: ConnectivityAppWrapper(
         app: MaterialApp(
-          home: SplashPage(),
+          home: token == null ? SignInPage() : SplashPage2(),
           debugShowCheckedModeBanner: false,
           routes: {
             SplashPage.id: (context) => SplashPage(),
+            SplashPage2.id: (context) => SplashPage2(),
             SignInPage.id: (context) => SignInPage(),
             HomePage.id: (context) => HomePage(),
             AwaitingApprovals.id: (context) => AwaitingApprovals(),
